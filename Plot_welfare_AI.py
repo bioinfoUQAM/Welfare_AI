@@ -14,8 +14,15 @@ def plot_step_start(df, step_type, color):
 
     """
     # Determine the indexes where the value of Front_Step changes
-    df1 = df[step_type].to_frame().dropna()
-    periods = df1.iloc[:, 0].str.contains("Start").dropna().to_frame().index
+
+    df1 = df[step_type].to_frame().dropna().iloc[:, 0].astype(str).str[0].to_frame().astype(int)# take the first caracter
+    test = df1.iloc[0, 0] == 1 # test the begin of the first step
+    df1 = df1.diff()
+    if test:
+        df1.iloc[0] = 1
+
+
+    periods = df1.where(df1 == 1).dropna().index + 2
 
     # Plot the red vertical lines
     for index in periods:
@@ -26,6 +33,7 @@ def plot_step_start(df, step_type, color):
     for i, period in enumerate(periods):
         plt.text(y=(y_lim[0] + y_lim[1]) / 2, x=period + 5,
                  s=step_type + ' ' + str(i + 1), color=color, fontsize=15, rotation='vertical')
+    return periods
 
 
 def plot_all_markers_subplots(df, sheet):
@@ -37,18 +45,29 @@ def plot_all_markers_subplots(df, sheet):
 
     """
     columns = df.iloc[0, 2:34].index
-    fig = plt.gcf()
-    fig.set_size_inches(43.2, 28.8)
-    size = fig.get_size_inches() * fig.dpi
-    print(size)
+    fig, axes = plt.subplots(9, 4, figsize=(50, 35))
     fig.suptitle(sheet, fontsize=60)
+    line = plt.Line2D((0, 1), (0.455, 0.455), color="k", linewidth=7)
+    fig.add_artist(line)
+    plt_cols = 4
+    plt_rows = 8
+
+    coordinates = ['X', 'Y', 'Z', 'R']
+
+    for i, coordinate in enumerate(coordinates):
+        plt.subplot(plt_rows + 1, plt_cols, i+1)
+        plt.text(0.5, 0.2, horizontalalignment='center',verticalalignment='center', s=coordinate, fontsize= 50)
+        plt.axis('off')
     for i, column in enumerate(columns):
-        plt.subplot(9, 4, i + 5)
+        # plt.subplot(plt_rows + 1, plt_cols, i + 7 + int(i/4))
+        plt.subplot(plt_rows + 1, plt_cols, i + 5)
         plt.plot(df[column])
         plot_step_start(df, 'Front_Step', 'red')
         plot_step_start(df, 'Back_Step', 'green')
-        plt.ylabel(column, fontsize=30)
-    fig.tight_layout()
+        plt.xlabel(' ', fontsize=30)
+        plt.ylabel('\n\n'+column, fontsize=30)
+    fig.text(0, 0.65, s='Front leg', rotation='vertical', fontsize=50)
+    fig.text(0, 0.15, s='Back leg', rotation='vertical', fontsize=50)
     plt.show()
 
 
@@ -74,12 +93,19 @@ def main():
     """
     Plots of the Markers for all the sheets of the Excel file 'ScaledCoordinates_Post-Trial.xlsx'
     """
-    sheets = ['Scaled-Coord_2063_Side2', 'Scaled-Coord_5870(2)_Side2',
+    sheets = ['Scaled-Coord_2063_Side1', 'Scaled-Coord_2063_Side2',
+              'Scaled-Coord_5870(2)_Side2', 'Scaled-Coord_5870(2)_Side1',
               'Scaled-Coord_2078(2)_Side1', 'Scaled-Coord_2078(2)_Side2',
-              'Scaled-Coord_5327(2)_Side1', 'Scaled-Coord_5327(2)_Side2']
+              'Scaled-Coord_5327(2)_Side1', 'Scaled-Coord_5327(2)_Side2',
+              'Scaled-Coord_8527_Side1', 'Scaled-Coord_8527_Side2',
+              'Scaled-Coord_8531_Side1', 'Scaled-Coord_8531_Side2',
+              'Scaled-Coord_2066_Side1', 'Scaled-Coord_2066_Side2',
+              'Scaled-Coord_5871_Side1', 'Scaled-Coord_5871_Side2',
+              'Scaled-Coord_5865_Side1', 'Scaled-Coord_5865_Side2', ]
     for sheet in sheets:
         df = pd.read_excel(r"D:\BA_Yasmine_UQAM\Plot\ScaledCoordinates_Post-Trial.xlsx", sheet)
-        plot_all_markers(df, sheet)
+        plot_all_markers_subplots(df, sheet)
+
 
 
 if __name__ == '__main__':
