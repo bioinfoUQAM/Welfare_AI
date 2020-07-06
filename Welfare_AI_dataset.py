@@ -1,0 +1,85 @@
+import os
+import matplotlib.pyplot as plt
+import pandas as pd
+import numpy as np
+
+DATASET_PATH = os.path.join(os.path.dirname(__file__), 'ScaledCoordinates_Post-Trial.xlsx')
+DICTIONARY_PATH = os.path.join(os.path.dirname(__file__), 'Dictionary_Kinematics.xlsx')
+
+
+class CowsDataset:
+    def __init__(self, sheet_names=None):
+        self.sheet_names = sheet_names
+        self.df = self.load_dataset()
+        self.i = 0
+
+    def __getitem__(self, index):
+        return self.df[index]
+
+    def __len__(self):
+        return len(self.df)
+
+    def __next__(self):
+        if self.i < len(self):
+            self.i += 1
+            return self[self.i-1]
+        raise StopIteration()
+
+    def __iter__(self):
+        return self
+
+    def load_dataset(self):
+        dictionary = pd.read_excel(DICTIONARY_PATH, "Video File -> Excel Tab Names")
+        dictionary = dictionary.to_numpy()
+        if self.sheet_names is None:
+            self.sheet_names = dictionary[:, 0]
+        df = [pd.DataFrame(pd.read_excel(DATASET_PATH, sheet).iloc[:, 2:34]) for
+              x, sheet in enumerate(self.sheet_names)]
+        return df
+
+    @staticmethod
+    def get_side_sheets(side):
+        dictionary = pd.read_excel(DICTIONARY_PATH, "Video File -> Excel Tab Names")
+        dictionary = dictionary.to_numpy()
+        if side == 'side1':
+            side1_names = dictionary[0::2]
+            return side1_names[:, 0]
+        elif side == 'side2':
+            side2_names = dictionary[1::2]
+            return side2_names[:, 0]
+
+    @staticmethod
+    def get_sheet(sheet):
+        return pd.DataFrame(pd.read_excel(DATASET_PATH, sheet).iloc[:, 0:34])
+
+    @staticmethod
+    def get_cow_names():
+        dictionary = pd.read_excel(DICTIONARY_PATH, "Video File -> Excel Tab Names")
+        dictionary = dictionary.to_numpy()
+        side1_names = dictionary[0::2]
+        return side1_names[:, 1]
+
+    @staticmethod
+    def get_cow_name(sheet):
+        dictionary = pd.read_excel(DICTIONARY_PATH, "Video File -> Excel Tab Names")
+        dictionary = dictionary.to_numpy()
+        index = np.where(dictionary == sheet)
+        return dictionary[index[0], 1][0]
+
+    def get_joint_names(self):
+        joint_names = self.df[1].iloc[0, 2:34].index
+        return joint_names
+
+    def get_list_of_joints(self):
+        joint_names = self.get_joint_names()
+        list_column = []
+        for i, column in enumerate(joint_names):
+            for j, dCow in enumerate(self.df):
+                list_column.append(dCow[column])  # list containing all the columns from all the sheets/columns with the same column_name are together
+        df_column = pd.DataFrame(list_column).T  # Dataframe containing the same column name of diffrent sheet next to each other
+        list_of_joints = []
+        for i, column in enumerate(joint_names):
+            df_joint = df_column.filter(regex=column)
+            df_joint.columns = CowsDataset.get_cow_names() + "   " + df_joint.columns
+            list_of_joints.append(df_joint)
+        return list_of_joints
