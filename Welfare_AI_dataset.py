@@ -29,6 +29,10 @@ class CowsDataset:
         return self
 
     def load_dataset(self):
+        """
+
+        :return: load the given dataset
+        """
         dictionary = pd.read_excel(DICTIONARY_PATH, "Video File -> Excel Tab Names")
         dictionary = dictionary.to_numpy()
         if self.sheet_names is None:
@@ -39,6 +43,11 @@ class CowsDataset:
 
     @staticmethod
     def get_side_sheets(side):
+        """
+
+        :param side: side or side2 as string
+        :return: the names of the excel sheet of the given side
+        """
         dictionary = pd.read_excel(DICTIONARY_PATH, "Video File -> Excel Tab Names")
         dictionary = dictionary.to_numpy()
         if side == 'side1':
@@ -49,28 +58,50 @@ class CowsDataset:
             return side2_names[:, 0]
 
     @staticmethod
-    def get_sheet(sheet):
-        return pd.DataFrame(pd.read_excel(DATASET_PATH, sheet).iloc[:, 0:34])
+    def get_sheet(sheet_name):
+        """
+
+        :param sheet_name: sheet name (string)
+        :return: the excel sheet corresponding the given sheet name
+        """
+        return pd.DataFrame(pd.read_excel(DATASET_PATH, sheet_name).iloc[:, 0:34])
 
     @staticmethod
     def get_cow_names():
+        """
+
+        :return: a list of the cows' names
+        """
         dictionary = pd.read_excel(DICTIONARY_PATH, "Video File -> Excel Tab Names")
         dictionary = dictionary.to_numpy()
         side1_names = dictionary[0::2]
         return side1_names[:, 1]
 
     @staticmethod
-    def get_cow_name(sheet):
+    def get_cow_name(sheet_name):
+        """
+
+        :param sheet_name: sheet's name (string)
+        :return: the name of the cow corresponding the name of the sheet
+        """
         dictionary = pd.read_excel(DICTIONARY_PATH, "Video File -> Excel Tab Names")
         dictionary = dictionary.to_numpy()
-        index = np.where(dictionary == sheet)
+        index = np.where(dictionary == sheet_name)
         return dictionary[index[0], 1][0]
 
     def get_joint_names(self):
+        """
+
+        :return: list of the joint names
+        """
         joint_names = self.df[1].iloc[0, 2:34].index
         return joint_names
 
     def get_list_of_joints(self):
+        """
+
+        :return: list of the joints
+        """
         joint_names = self.get_joint_names()
         list_column = []
         for i, column in enumerate(joint_names):
