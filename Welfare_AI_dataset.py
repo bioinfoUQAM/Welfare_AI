@@ -2,6 +2,11 @@ import os
 import matplotlib.pyplot as plt
 import pandas as pd
 import numpy as np
+from numba import jit
+from scipy.signal import argrelextrema  
+import itertools
+import statistics
+#from Data_generation import GeneratedData
 
 DATASET_PATH = os.path.join(os.path.dirname(__file__), 'ScaledCoordinates_Post-Trial.xlsx')
 DICTIONARY_PATH = os.path.join(os.path.dirname(__file__), 'Dictionary_Kinematics.xlsx')
@@ -12,6 +17,7 @@ class CowsDataset:
         self.sheet_names = sheet_names
         self.df = self.load_dataset()
         self.i = 0
+
 
     def __getitem__(self, index):
         return self.df[index]
@@ -88,13 +94,14 @@ class CowsDataset:
         dictionary = dictionary.to_numpy()
         index = np.where(dictionary == sheet_name)
         return dictionary[index[0], 1][0]
-
-    def get_joint_names(self):
+    
+    @staticmethod
+    def get_joint_names(dataset):
         """
 
         :return: list of the joint names
         """
-        joint_names = self.df[1].iloc[0, 2:34].index
+        joint_names = dataset[1].iloc[0, 0:34].index
         return joint_names
 
     def get_list_of_joints(self):
@@ -102,7 +109,7 @@ class CowsDataset:
 
         :return: list of the joints
         """
-        joint_names = self.get_joint_names()
+        joint_names = CowsDataset.get_joint_names(self)
         list_column = []
         for i, column in enumerate(joint_names):
             for j, dCow in enumerate(self.df):
@@ -114,3 +121,68 @@ class CowsDataset:
             df_joint.columns = CowsDataset.get_cow_names() + "   " + df_joint.columns
             list_of_joints.append(df_joint)
         return list_of_joints
+    
+    @staticmethod
+    def get_extrema_indexes(data, order):
+        """
+        get a list of all extrema of the array data with order 3
+        when the order is greater the number of extrema is less -> not very exact
+        :param order: the minimum space between two extremum values
+        :param data: 1D array
+        :return: list of indexes by which we have a local minimum or maximum
+        """
+        local_maxima = argrelextrema(data.to_numpy(), np.greater_equal, order=order, mode='clip')[0]
+        local_maxima = [local_maxima]
+        local_minima = argrelextrema(data.to_numpy(), np.less_equal, order=order, mode='clip')[0]
+        local_minima = [local_minima]
+        local_maxima.extend(local_minima)
+        extrema = np.sort(list(itertools.chain.from_iterable(local_maxima)))
+        return extrema
+    
+    
+    def remove_outliers(self,sheet_index,joint_name, number=0.05, order=10):
+        """
+        
+
+        Parameters
+        ----------
+        sheet_index : TYPE int
+            DESCRIPTION.
+        joint_name : TYPE string
+            DESCRIPTION.
+        number : TYPE float
+            DESCRIPTION.0.05to 0.95 or 0.01 to 0.99
+        order : TYPE
+            DESCRIPTION.
+
+        Returns
+        -------
+        new_column : TYPE
+            DESCRIPTION.
+
+        """
+        column = self.df[sheet_index][joint_name]
+        indexes = CowsDataset.get_extrema_indexes(column,order)
+        sequences = np.split(column.to_numpy(), indexes)
+        new_sequences = []
+        for i, seq in enumerate(sequences):
+            seq = pd.Series(seq)
+            seq = seq.mask(~seq.between(seq.quantile(number), seq.quantile(1-number)),np.nan)
+            seq = seq.interpolate().to_numpy() 
+            new_sequences.append(seq)
+        new_column = pd.Series(np.concatenate( new_sequences, axis=0 ))
+        new_column = new_column.interpolate()
+        return new_column
+            
+    def clean_dataset(self, number, order):
+        for i, sheet in enumerate(self.df):
+            columns = CowsDataset.get_joint_names(self.df)
+            for j, joint_name in enumerate(columns):
+                column = self.remove_outliers(i,joint_name, number, order)
+        return self.df
+       
+                
+        
+          
+        
+        
