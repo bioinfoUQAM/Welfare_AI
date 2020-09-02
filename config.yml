@@ -1,0 +1,7 @@
+TRAINED_MODELS_PATH: "./trained_models"
+EXPS_PATH: "./experiments"
+
+YKDATASET_PATH: "./dataset/Generated data/side2"
+DIC_PATH: "./dataset/Generated data/labels_dic_side2.csv"
+WELFAREAI_DATASET_PATH: "./dataset/test_dataset/side2"
+DIC_TEST_PATH: "./dataset/test_dataset/side2/labels_dic_testside2.csv"
