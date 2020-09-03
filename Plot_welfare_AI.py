@@ -3,8 +3,9 @@
 """
 import pandas as pd
 import matplotlib.pyplot as plt
-
-
+from fitter import Fitter
+import numpy as np
+import scipy
 def plot_step_start(df, step_type, color):
     """
     Plot vertical lines at the begin of every step
@@ -93,20 +94,53 @@ def main():
     """
     Plots of the Markers for all the sheets of the Excel file 'ScaledCoordinates_Post-Trial.xlsx'
     """
-    sheets = ['Scaled-Coord_2063_Side1', 'Scaled-Coord_2063_Side2',
-              'Scaled-Coord_5870(2)_Side2', 'Scaled-Coord_5870(2)_Side1',
-              'Scaled-Coord_2078(2)_Side1', 'Scaled-Coord_2078(2)_Side2',
-              'Scaled-Coord_5327(2)_Side1', 'Scaled-Coord_5327(2)_Side2',
-              'Scaled-Coord_8527_Side1', 'Scaled-Coord_8527_Side2',
-              'Scaled-Coord_8531_Side1', 'Scaled-Coord_8531_Side2',
-              'Scaled-Coord_2066_Side1', 'Scaled-Coord_2066_Side2',
-              'Scaled-Coord_5871_Side1', 'Scaled-Coord_5871_Side2',
-              'Scaled-Coord_5865_Side1', 'Scaled-Coord_5865_Side2', ]
-    for sheet in sheets:
-        df = pd.read_excel(r"D:\BA_Yasmine_UQAM\Plot\ScaledCoordinates_Post-Trial.xlsx", sheet)
-        plot_all_markers_subplots(df, sheet)
+    # sheets = ['Scaled-Coord_2063_Side1', 'Scaled-Coord_2063_Side2',
+              # 'Scaled-Coord_5870(2)_Side2', 'Scaled-Coord_5870(2)_Side1',
+              # 'Scaled-Coord_2078(2)_Side1', 'Scaled-Coord_2078(2)_Side2',
+              # 'Scaled-Coord_5327(2)_Side1', 'Scaled-Coord_5327(2)_Side2',
+              # 'Scaled-Coord_8527_Side1', 'Scaled-Coord_8527_Side2',
+              # 'Scaled-Coord_8531_Side1', 'Scaled-Coord_8531_Side2',
+              # 'Scaled-Coord_2066_Side1', 'Scaled-Coord_2066_Side2',
+              # 'Scaled-Coord_5871_Side1', 'Scaled-Coord_5871_Side2',
+              # 'Scaled-Coord_5865_Side1', 'Scaled-Coord_5865_Side2', ]
+    fileNames_VideoNames = pd.read_excel(r"D:\BA_Yasmine_UQAM\Dictionary_Kinematics.xlsx", "Video File -> Excel Tab Names")
+    fileNames_VideoNames= fileNames_VideoNames.to_numpy()
+    side1Names = fileNames_VideoNames[0::2]
+    side2Names = fileNames_VideoNames[1::2]#start from the first element ald take every 2nd one
+    sheets=side1Names[:,0]
+    # for sheet in sheets:
+    #     df = pd.read_excel(r"D:\BA_Yasmine_UQAM\Plot\ScaledCoordinates_Post-Trial.xlsx", sheet)
+    #     #plot_all_markers_subplots(df, sheet)
+    #     plot_all_markers(df, sheet)
+    
+    sheets2=side2Names[:,0]
+    df = [pd.DataFrame(pd.read_excel(r"D:\BA_Yasmine_UQAM\Plot\ScaledCoordinates_Post-Trial.xlsx",sheet).iloc[:, 0:34]) for x,sheet in enumerate(sheets)]  
+    columns = df[1].iloc[0, 2:34].index 
+    f = Fitter(df[0]['Z-E'])       
+    f.fit()
+    f.summary()
+    DataFrame.plot.hist(df[0]['Z-E'], by=None, bins=10, **kwargs)
+    # min_val= min(df[0]['Z-E'])
+    # max_val=max(df[0]['Z-E'])
+    # rand=np.random.choice(np.arange(min_val, max_val), f.fitted_param)
+    param = scipy.stats.norm.fit(df[0]['Z-E'].dropna())
+    random_samples = scipy.stats.norm.rvs(param[0], param[1], size=1000)
+    
+    #list_of_joints = create_list_of_joints(df,columns)
+    # fig = plt.gcf()
 
+    # for i, column in enumerate(columns):
+    #     fig = plt.gcf()
+        #fig.set_size_inches(43.2, 28.8)
+        # for j, sheet in enumerate(df):
+        #     plt.subplot(9, 1, i+1)
+        #     plt.plot(sheet[column])
+        #     plot_step_start(sheet, 'Front_Step', 'red')
+        #     plot_step_start(sheet, 'Back_Step', 'green')
+        # fig.tight_layout()
+        # plt.show()
 
+   
 
 if __name__ == '__main__':
     main()
