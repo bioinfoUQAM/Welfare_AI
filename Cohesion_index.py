@@ -255,10 +255,10 @@ class Cohesion_analysis:
 # assert nbChamps >= 3, "Nombre de champs insuffisant dans {}".format(sys.argv[1])
 # type_de_classe = entete[-1]
 
-# nomClasse = [] # class name
-# ids = []       # sample name
-# classes = []   # numver of each class
-# data = []      # data samples for each sample
+# nomClasse = [] # nom de la classe
+# ids = []       # nom de chaque exemple
+# classes = []   # numéro de la classe de chaque exemple
+# data = []      # les données liste de liste des attributs de chaque exemple
 
 
 # for ligne in reader:

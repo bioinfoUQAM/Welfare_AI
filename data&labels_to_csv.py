@@ -32,14 +32,12 @@ new_dataset = []#list of the new generated dataframes of the generated cows
 new_sheets = [] #list of the names of the generated cows
 new_targets = []#list of the labels of the generated cows
 paths = []# list of the paths of csv generated cow files
-
 #generate n_samples of every cow
 for i, sheet in enumerate(tqdm(dataset)):
     new_dataset.append(GeneratedData.create_generated_cow_data(dataset, i, n_samples)[0])
     new_sheets.append(GeneratedData.create_generated_cow_data(dataset, i, n_samples)[1])
     new_targets.append(GeneratedData.create_generated_cow_data(dataset, i, n_samples)[2])
 # np.array(new_targets).reshape([n_samples*n_cows,-1])
-
 # save the generated samples in \Generated data\side2
 for i, cows in enumerate(new_dataset):
     for j, sample in enumerate(cows):

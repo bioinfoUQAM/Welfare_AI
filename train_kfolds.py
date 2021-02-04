@@ -45,7 +45,6 @@ def main():
     dataset = YKDataset(window_size=cfg.window_size, dic_path=cfg.DIC_PATH)
     dataset_size = len(dataset)
     indices = list(range(dataset_size))
-
     kf = KFold(n_splits=cfg.n_folds, shuffle=True)
     for train_indices, val_indices in kf.split(indices):
         print('t', train_indices)
