@@ -17,34 +17,7 @@ from sklearn.metrics.pairwise import cosine_similarity
 class Hierarchical_clustering:
     def __init__(self):
         pass
-# df =[]
-# for i, sheet in enumerate(sheets):
-#     df.append(pd.read_excel(r"D:\BA_Yasmine_UQAM\Plot\ScaledCoordinates_Post-Trial.xlsx" ,sheet))
-# names = CowsDataset.get_side_sheets('side2')
-# dataset = CowsDataset(names)
-# joint_names = CowsDataset.get_joint_names(dataset)# column names
-# list_of_joints = CowsDataset.get_list_of_joints(dataset)
-# correlationList = []
-# #correlationHeatmaps = []
-# distanceMatrix = []
-# dissimilarityCosine = []
-# dissimilarityCorrelation = []
-# sumCosine = 0
-# sumCorr = 0
-# for i, li in enumerate(list_of_joints):
-#     matrix = np.triu(li.corr())
-#     ax = plt.axes()
-#     correlationList.append(li.corr())
-#     dissimilarityCosine.append(scipy.spatial.distance.cdist(li.dropna().T, li.dropna().T, 'cosine',
-#                                                             lambda u, v: np.sqrt(np.nansum((u - v) ** 2))))
-#     # dissimilarityCosine.append( distanceMatrix[i])
-#     dissimilarityCorrelation.append(1 - correlationList[i])
-#     sumCosine = sumCosine + dissimilarityCosine[i]
-#     sumCorr = sumCorr + np.asarray(dissimilarityCorrelation[i])
-    # distanceMatrix.append(pairwise_distances(li,'cosine'))
-    # correlationHeatmaps.append( sns.heatmap(li.corr(), center=0, annot = True,mask= matrix, vmin=-1, vmax=1))# list of correlation matrices
-    # ax.set_title(joint_names[i]+ " Side 1", fontsize= 40)
-    # plt.show()
+
     @staticmethod
     def cosine_correlation(list_of_joints, index):
         #ax = plt.axes()
@@ -150,21 +123,4 @@ class Hierarchical_clustering:
             joints= CowsDataset.get_joint_names(dataset)
             ax.set_title('Dendrogram Correlation' + joints[i])
             plt.rcParams.update({'figure.max_open_warning': 0})
-#
-# lenCosine = len(dissimilarityCosine)
-# lenCorr = len(dissimilarityCorrelation)
-# superDissimilarityCosine = sumCosine / lenCosine
-# superDissimilarityCorr = sumCorr / lenCorr
-# hierarchyCosine = linkage(superDissimilarityCosine, method='average')
-# hierarchyCorr = linkage(superDissimilarityCorr, method='average')
-# f, axes = plt.subplots(1, 2, sharey=True)
-# dnCosine = dendrogram(hierarchyCosine, ax=axes[0], labels=cowNames, leaf_rotation=90, leaf_font_size=10)
-# axes[0].set_ylabel('dendrogram Cosine Side2 with all the cows')
-# dnCorr = dendrogram(hierarchyCorr, ax=axes[1], labels=cowNames, leaf_rotation=90, leaf_font_size=10)
-# axes[1].set_ylabel('dendrogram Correlation Side2 with all the cows')
-# labelsCosine = fcluster(hierarchyCosine, t=2, criterion='maxclust')
-# labelsCorr = fcluster(hierarchyCorr, t=2, criterion='maxclust')
-# kCos = KMeans(n_clusters=2, random_state=0).fit_predict(superDissimilarityCosine)
-# kCorr = KMeans(n_clusters=2, random_state=0).fit_predict(superDissimilarityCorr)
-# print(kCos)
-# print(kCorr)
+

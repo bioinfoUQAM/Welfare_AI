@@ -145,6 +145,8 @@ plt.show()
 # Cohesion_analysis.visualize_clustering_analysis('Cohesion ', sample_cohesion_values, cohesion_avg, cluster_labels, n_clusters)
 # kmeanModel = KMeans(n_clusters = 2)
 # kmeanModel.fit(real_dissimilarity_matrix)
+
+
 def tSNE_visualiation(square_mean_cosine, instance_names):
     #square_mean_cosine = real_dissimilarity_matrix
     cow_names = instance_names
@@ -179,12 +181,8 @@ def plot_clusters(n_clusters, cluster_labels, tabLims, mds, cList, titre, xLabel
    fig, ax = plt.subplots()
    fig.set_size_inches(31, 31)
    
-   # colors = cm.spectral(cluster_labels.astype(float) / n_clusters)
-   # print (colors)
    colors = [cList[x] for x in cluster_labels]
-   #ax.scatter(X[:, 0], X[:, 1], marker='.', s=30, lw=0, alpha=0.7,
-   #            c=colors)
-   
+ 
    if len(tabLims) > 0 :
      ax.set_xlim([tabLims[0][0], tabLims[0][1]])
      ax.set_ylim([tabLims[1][0], tabLims[1][1]])
@@ -192,23 +190,14 @@ def plot_clusters(n_clusters, cluster_labels, tabLims, mds, cList, titre, xLabel
    ax.scatter(mds[:, 0], mds[:, 1], marker='o', edgecolors='face',
            s=2500, c=colors, alpha=0.4, linewidths=0)
    
-   # Labeling the clusters
-   #centers = clusterer.cluster_centers_
-   # Draw white circles at cluster centers
-   #ax.scatter(centers[:, 0], centers[:, 1],
-   #            marker='o', c="white", alpha=1, s=200)
-   
-   #for i, c in enumerate(centers):
-   #    ax.scatter(c[0], c[1], marker='$%d$' % i, alpha=1, s=50)
    
    ax.set_title(titre)
    ax.set_xlabel(xLabel, fontsize=FONT_SIZE)
    ax.set_ylabel(yLabel, fontsize=FONT_SIZE)
    
-   # ax.set_yticks([])  # Clear the yaxis ticks
-   # ax.set_xticks([])  # Clear the xaxis ticks
 
-   # plt.show()
+
+   plt.show()
    fig.savefig(outFig)   
     
     

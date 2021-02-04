@@ -59,16 +59,15 @@ class YKDataset(Dataset):
         # file = pd.DataFrame(file).fillna(0).values#fill the nan values with 0
         # file = pd.DataFrame(file).head(self.window_size)# window_size=CowsDataset.sliding_window(dataset) const
         return file, file_label, file_path
-        # return{
-        #     'file': file,
-        #     'label': file_label,
-        #     'file_id': file_path
-        # }
-
+    
 
     def __len__(self):
         #len(dataset)
         return self.n_samples
+
+
+
+
 
 
 dataset = YKDataset()
@@ -85,12 +84,3 @@ print('labels.size() ', labels.size())
 print(features, labels, id)
 
 
-#training loop
-num_epochs = 2
-total_samples = len(dataset)
-n_iterations = math.ceil(total_samples/batch_size)
-for epoch in range(num_epochs):
-    for i,(inputs, targets, ids) in enumerate(dataloader):
-        #forwardpropagation, backwardpropagation, update weights
-        if(i+1) % 4 == 0:
-            print(f'epoch {epoch +1}/{num_epochs}, step {i+1}/{n_iterations}, inputs {inputs.shape}')

@@ -60,12 +60,7 @@ def SVM(args):
     folder_path = args.files_folder
     dic_path_t = args.dic_path_test
     folder_path_t = args.files_folder_test
-    # dic_path = r"D:\BA_Yasmine_UQAM\Welfare_AI\dataset\Generated data\labels_dic_side2.csv"
-    # folder_path = r"D:\BA_Yasmine_UQAM\Welfare_AI\dataset\Generated data\side2"
-    # dic_path_t = r"D:\BA_Yasmine_UQAM\Welfare_AI\dataset\test_dataset\side2\labels_dic_testside2.csv"
-    # folder_path_t = r"D:\BA_Yasmine_UQAM\Welfare_AI\dataset\test_dataset\side2"
-    # YKDataset
-    # dataset = YKDataset(window_size=window_size, dic_path=dic_path, folder_path=folder_path)
+    
     dataset = YKDataset(window_size=window_size, folder_path=folder_path)
 
     batch_size = len(dataset)
@@ -86,8 +81,6 @@ def SVM(args):
         validation_file = Path(args.val_folder_path) / 'linear' / f'{n_fold}val_file2%.csv'
         with open(validation_file, 'w') as file:
             file.write(f"SVM model evaluation on validation set \n")
-        #print(n_fold, ' training indices', train_indices)
-        #print(n_fold, ' validation indices', val_indices)
         train_sampler = SubsetRandomSampler(train_indices)
         val_sampler = SubsetRandomSampler(val_indices)
         # Creating PT data samplers and loaders:

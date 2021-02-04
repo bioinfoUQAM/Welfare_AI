@@ -46,11 +46,6 @@ def SVM():
     folder_path = args.files_folder
     dic_path_t = args.dic_path_test
     folder_path_t = args.files_folder_test
-    # dic_path = r"D:\BA_Yasmine_UQAM\Welfare_AI\dataset\Generated data\labels_dic_side2.csv"
-    # folder_path = r"D:\BA_Yasmine_UQAM\Welfare_AI\dataset\Generated data\side2"
-    # dic_path_t = r"D:\BA_Yasmine_UQAM\Welfare_AI\dataset\test_dataset\side2\labels_dic_testside2.csv"
-    # folder_path_t = r"D:\BA_Yasmine_UQAM\Welfare_AI\dataset\test_dataset\side2"
-    #YKDataset
     dataset = YKDataset(window_size=window_size, dic_path=dic_path, folder_path=folder_path)
     batch_size = len(dataset)
     
